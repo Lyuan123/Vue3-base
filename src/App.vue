@@ -4,10 +4,8 @@
     <h1>{{count}}</h1>
     <h1>{{double}}</h1>
     <h1>{{greetings}}</h1>
-    <h1 v-if="loading"> Loading....</h1>
-    <img v-if="loaded" :src="result.message"/>
     <p>{{error}}</p>
-    <!-- <Suspense>
+    <Suspense>
       <template #default>
         <div>
           <async-show />
@@ -17,11 +15,11 @@
       <template #fallback>
         <h1>Loading !...</h1>
       </template>
-    </Suspense> -->
+    </Suspense>
     <button @click="openModal">Open Modal</button><br/>
     <modal :isOpen="modalIsOpen" @close-modal="onModalClose"> My Modal !!!!</modal>
     <h1 v-if="loading">Loading!...</h1>
-    <!-- <img v-if="loaded" :src="result[0].url" > -->
+    <img v-if="loaded" :src="result[0].url" >
     <h1>X: {{x}}, Y: {{y}}</h1>
     <button @click="increase">👍+1</button><br/>
     <button @click="updateGreeting">Update Title</button>
@@ -32,9 +30,9 @@
 import { ref, computed, reactive, toRefs, watch, onErrorCaptured } from 'vue'
 import useMousePosition from './hooks/useMousePosition'
 import useURLLoader from './hooks/useURLLoader'
-// import Modal from './components/Modal.vue'
-// import AsyncShow from './components/AsyncShow.vue'
-// import DogShow from './components/DogShow.vue'
+import Modal from './components/Modal.vue'
+import AsyncShow from './components/AsyncShow.vue'
+import DogShow from './components/DogShow.vue'
 interface DataProps {
   count: number;
   double: number;
@@ -52,11 +50,11 @@ interface CatResult {
 }
 export default {
   name: 'App',
-  // components: {
-  //   Modal,
-  //   AsyncShow,
-  //   DogShow,
-  // },
+  components: {
+    Modal,
+    AsyncShow,
+    DogShow,
+  },
   setup() {
     const error = ref(null)
     onErrorCaptured((e: any) => {
@@ -69,11 +67,10 @@ export default {
       double: computed(() => data.count * 2),
     })
     const { x, y } = useMousePosition()
-    const {result ,loading,loaded} = useURLLoader('https://dog.ceo/api/breeds/image/random')
-    // const { result, loading, loaded } = useURLLoader<CatResult[]>('https://api.thecatapi.com/v1/images/search?limit=1')
+    const { result, loading, loaded } = useURLLoader<CatResult[]>('https://api.thecatapi.com/v1/images/search?limit=1')
     watch(result, () => {
       if (result.value) {
-        console.log('value', result.value)
+        console.log('value', result.value[0].url)
       }
     })
     const greetings = ref('')
